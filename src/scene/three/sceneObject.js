@@ -55,10 +55,8 @@ export default class SceneObject {
   }
 
   move() {
-
-    this.velocity.add(this.acceleration);
-    this.position.add(this.velocity);
-    this.threeObj.position.x = this.position.x
-    this.threeObj.position.y = this.position.y
+    this.position.x = this.position.x
+    this.position.y = this.position.y
+    this.position.z = this.position.z + 0.05
   }
 }

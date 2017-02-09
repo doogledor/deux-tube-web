@@ -4,7 +4,7 @@ import Component from 'inferno-component';
 import JSONLOADER from '../jsonLoader';
 import VideoC from './videoComponent';
 
-import Scene from './scene'
+import Scene from './three/scene'
 
 import './scene.scss';
 

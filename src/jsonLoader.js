@@ -10,7 +10,9 @@ const L = (() => {
           no(err)
         }
         const p = data.map(d=>{
-          return JSON.parse(d)
+          const dd = JSON.parse(d)
+          dd.duration = Math.floor(Math.random() * 100) + 100
+          return dd;
         })
         yes(p)
       })
