@@ -23,11 +23,13 @@ class MyComponent extends Component {
         if (!obj.youtube) {
           return null
         }
-        return Object.assign({}, {
-          domNode: null,
-          onLoaded:(domNode=>{
-          })
-        }, obj.youtube)
+        return Object.assign({
+            duration:obj.duration
+          }, {
+            domNode: null,
+            onLoaded: (domNode => {})
+          },
+          obj.youtube)
       })
     )
     return this.nodes

@@ -1,7 +1,6 @@
 import createLoop from 'raf-loop'
 import THREE from './three'
 const OrbitControls = require('three-orbit-controls')(THREE)
-import Field from './field'
 import SceneObject from './sceneObject'
 import VideoPlayer from './videoPlayer';
 
@@ -9,7 +8,7 @@ const { Vector2, Vector3 } = THREE
 
 const MAX_X = 60
 const MAX_Y = 60
-const MAX_Z = 700
+const MAX_Z = 1000
 
 export default function Scene(target, elements) {
   var camera, scene, renderer, controls, width, height;
@@ -26,17 +25,14 @@ export default function Scene(target, elements) {
   target.appendChild(renderer.domElement);
 
   const sceneObjects = [];
-  const videoPlayers = [];
 
   elements.forEach(obj => {
     var object = new THREE.CSS3DObject(obj.domNode);
     object.element.classList.add('youtube-video');
     scene.add(object);
-    sceneObjects.push(new SceneObject(object));
-    videoPlayers.push(new VideoPlayer(obj.domNode))
-    resetParticles(sceneObjects[sceneObjects.length - 1], videoPlayers.length)
+    sceneObjects.push(new SceneObject(object, obj,MAX_Z ));
+    resetObjects(sceneObjects[sceneObjects.length - 1], sceneObjects.length)
   })
-
 
   const loop = createLoop(render).start();
   window.addEventListener('resize', resize, false);
@@ -45,41 +41,24 @@ export default function Scene(target, elements) {
 
   var fields = []
 
-
-  function resetParticles(sceneObjects, i = 1) {
+  function resetObjects(sceneObjects, i = 1) {
     sceneObjects.position.x = Math.random() * MAX_X - MAX_X / 2
     sceneObjects.position.y = Math.random() * MAX_Y - MAX_Y / 2
-    sceneObjects.position.z = Math.random() * MAX_Z - (MAX_Z * i + Math.random() * MAX_Z)
+    sceneObjects.position.z = MAX_Z
   }
 
   function plotParticles() {
     // a new array to hold particles within our bounds
     for (var i = 0; i < sceneObjects.length; i++) {
       var particle = sceneObjects[i];
-      var player = videoPlayers[i];
       var pos = particle.position;
-      /*
-            // If we're out of bounds, drop this particle and move on to the next
-            if (pos.x < -1000 || pos.x > 1000 || pos.y < -1000 || pos.y > 1000){
-              //particle.reset()
-              resetParticles(particle)
-              continue;
-            }
-
-            // Update velocities and accelerations to account for the fields
-            //particle.submitToFields(fields);
-            particle.update(fields);*/
-
-      // Move our sceneObjects
-      particle.move();
-      player.update(particle.position)
+      //particle.move();
     }
   }
 
   function onMouseMove(e) {
     const x = e.pageX / width - 0.5
     const y = e.pageY / height - 0.5
-    fields = [new Field(new Vector2(x, y), 1.001)]
   }
 
   function resize() {
@@ -96,7 +75,5 @@ export default function Scene(target, elements) {
     renderer.render(scene, camera);
   }
 
-  setTimeout(()=>{
-    videoPlayers[0].play()
-  },4000)
+  sceneObjects[0].start()
 }
